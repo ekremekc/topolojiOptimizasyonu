@@ -17,7 +17,7 @@ def lk():
 	return KE
 
 def FE(nelx, nely, x, penal):
-    ndof = 2*(nelx+1)*(nelx+1)
+    ndof = 2*(nelx+1)*(nely+1)
     K = coo_matrix((ndof,ndof))
     F = coo_array((ndof,1))
     U = coo_array((ndof,1))
@@ -34,28 +34,33 @@ def FE(nelx, nely, x, penal):
             n1 = (nely+1)*(elx)   + ely
             n2 = (nely+1)*(elx+1) + ely
             edof = [2*n1, 2*n1+1, 2*n2, 2*n2+1, 2*n2+2, 2*n2+3,2*n1+2, 2*n1+3]
-            print(edof)
-            print(Kn.shape)
-            # print("deger: ", Kn[edof,:][:, edof].shape)
-            # Kn[edof,:][:, edof] += x[ely,elx]**penal*KE
-            for local_x, dofx in enumerate(edof):
-                for local_y, dofy in enumerate (edof):
-                    Kn[dofx,dofy] += x[ely,elx]**penal*KE[local_x, local_y]
-    
+            # print(edof)
+            # print("ely: ",ely)
+            # print("elx: ",elx)
+            Kn[np.ix_(edof,edof)] += x[ely,elx]**penal*KE
+            # for local_x, dofx in enumerate(edof):
+            #     for local_y, dofy in enumerate (edof):
+            #         Kn[dofx,dofy] += x[ely,elx]**penal*KE[local_x, local_y]
+
     Fn[1,0] = -1
 
-    dofs  = np.arange(2*(nelx+1)*(nely+1))
+    dofs  = np.arange(ndof)
     fixed = np.union1d(dofs[0:2*(nely+1):2],np.array([2*(nelx+1)*(nely+1)-1]))
     free  = np.setdiff1d(dofs,fixed)
-
+    
     Kn = Kn[free,:][:,free]
-    Un[free,0]=spsolve(Kn,Fn[free,0])
+    Un[free]=spsolve(Kn,Fn[free])
+    Un[fixed] = 0
+
+    return Un
+
 
 if __name__ == "__main__":
     # Default input parameters
-    nelx=3
-    nely=3
+    nelx=10
+    nely=10
     ndof = 2*(nelx+1)*(nelx+1)
     x = np.full((nelx,nely), 0.4)
     penal = 0.3
-    FE(nelx, nely, x, penal)
+    Un = FE(nelx, nely, x, penal)
+    print(type(Un))
