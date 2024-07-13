@@ -1,16 +1,26 @@
 import numpy as np
 np.set_printoptions(linewidth=300, precision=3) # Tam matris gösterimleri için
-
 from fem import FE, lk
 from filter import check
 from sensitivity import oc
 import matplotlib.pyplot as plt
 
+
+
 def top(nelx, nely, volfrac, penal, rmin):
+    
+    # to run GUI event loop
+    plt.ion()
+    
+
     x = np.full((nely, nelx), volfrac)
     dc = np.zeros((nely, nelx))
     loop = 0
     change = 1
+
+    # here we are creating sub plots
+    figure, ax = plt.subplots(figsize=(15, 6))
+    ax.contourf(x, cmap="gray")
 
     while change >0.01:
         print("loop: ", loop, "change: ", change)
@@ -31,22 +41,36 @@ def top(nelx, nely, volfrac, penal, rmin):
                 c = c+x[ely, elx]**penal*Ue.T@KE@Ue
                 dc[ely, elx] = -penal*x[ely, elx]**(penal-1)*Ue.T@KE@Ue
         
-
         dc = check(nelx, nely, rmin, x, dc)
         
         x = oc(nelx, nely, x, volfrac, dc)
         
         change=np.linalg.norm(x.reshape(nelx*nely,1)-xold.reshape(nelx*nely,1),np.inf)
 
-    plt.contourf(x)
-    plt.colorbar()
+        # updating data values
+        ax.contourf(x, cmap="gray")
+        # line1.set_ydata(new_y)
+    
+        # drawing updated values
+        figure.canvas.draw()
+    
+        # This will run the GUI event
+        # loop until all UI events
+        # currently waiting have been processed
+        figure.canvas.flush_events()
+
+    # plt.contourf(x, cmap="gray", levels=100)
+    # plt.colorbar()
+    plt.savefig("topoloji.pdf")
     plt.show()
 
 
 if __name__ == "__main__":
-    nelx = 90
-    nely = 30
-    volfrac = 0.5
+    # 90x30 da calisiyor.
+
+    nelx = 60
+    nely = 20
+    volfrac = 0.4
     penal = 3.0
-    rmin = 1.5
+    rmin = 2
     top(nelx, nely, volfrac, penal, rmin)
