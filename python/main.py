@@ -30,7 +30,8 @@ def top(nelx, nely, volfrac, penal, rmin):
 
                 c = c+x[ely, elx]**penal*Ue.T@KE@Ue
                 dc[ely, elx] = -penal*x[ely, elx]**(penal-1)*Ue.T@KE@Ue
-           
+        
+
         dc = check(nelx, nely, rmin, x, dc)
         
         x = oc(nelx, nely, x, volfrac, dc)
@@ -43,8 +44,8 @@ def top(nelx, nely, volfrac, penal, rmin):
 
 
 if __name__ == "__main__":
-    nelx=30
-    nely=10
+    nelx = 90
+    nely = 30
     volfrac = 0.5
     penal = 3.0
     rmin = 1.5
