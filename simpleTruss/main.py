@@ -40,9 +40,9 @@ def top(nelx, nely, volfrac, penal, rmin):
 
                 c = c+x[ely, elx]**penal*Ue.T@KE@Ue
                 dc[ely, elx] = -penal*x[ely, elx]**(penal-1)*Ue.T@KE@Ue
-        
+
         dc = check(nelx, nely, rmin, x, dc)
-        
+        # print(dc)
         x = oc(nelx, nely, x, volfrac, dc)
         
         change=np.linalg.norm(x.reshape(nelx*nely,1)-xold.reshape(nelx*nely,1),np.inf)
@@ -58,6 +58,7 @@ def top(nelx, nely, volfrac, penal, rmin):
         # loop until all UI events
         # currently waiting have been processed
         figure.canvas.flush_events()
+        # print(x[-1,-1])
 
     # plt.contourf(x, cmap="gray", levels=100)
     # plt.colorbar()
@@ -68,9 +69,18 @@ def top(nelx, nely, volfrac, penal, rmin):
 if __name__ == "__main__":
     # 90x30 da calisiyor.
 
-    nelx = 60
+    # nelx = 30   
+    # nely = 10
+    # volfrac = 0.5
+    # penal = 3.0
+    # rmin = 1.5
+    
+    nelx = 60   
     nely = 20
-    volfrac = 0.4
+    volfrac = 0.3
     penal = 3.0
-    rmin = 2
+    rmin = 1.5
+    
+    
+    
     top(nelx, nely, volfrac, penal, rmin)
