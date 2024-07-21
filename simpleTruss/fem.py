@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import coo_matrix, coo_array
+from scipy.sparse import coo_matrix, coo_array, csr_matrix, csr_array, lil_array, lil_matrix
 from scipy.sparse.linalg import spsolve
 
 def lk():
@@ -18,15 +18,10 @@ def lk():
 
 def FE(nelx, nely, x, penal):
     ndof = 2*(nelx+1)*(nely+1)
-    K = coo_matrix((ndof,ndof))
-    F = coo_array((ndof,1))
-    U = coo_array((ndof,1))
+    Kn = lil_matrix((ndof,ndof))
+    Fn = lil_array((ndof,1))
+    Un = lil_array((ndof,1))
     
-    # make editable and accessible
-
-    Kn = K.tocsr()
-    Fn = F.tocsr()
-    Un = U.tocsr()
     KE = lk()
 
     for ely in range(nely):
@@ -34,13 +29,7 @@ def FE(nelx, nely, x, penal):
             n1 = (nely+1)*(elx)   + ely
             n2 = (nely+1)*(elx+1) + ely
             edof = [2*n1, 2*n1+1, 2*n2, 2*n2+1, 2*n2+2, 2*n2+3,2*n1+2, 2*n1+3]
-            # print(edof)
-            # print("ely: ",ely)
-            # print("elx: ",elx)
             Kn[np.ix_(edof,edof)] += x[ely,elx]**penal*KE
-            # for local_x, dofx in enumerate(edof):
-            #     for local_y, dofy in enumerate (edof):
-            #         Kn[dofx,dofy] += x[ely,elx]**penal*KE[local_x, local_y]
 
     Fn[1,0] = -1
 
