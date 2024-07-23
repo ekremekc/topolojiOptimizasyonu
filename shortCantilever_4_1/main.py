@@ -53,16 +53,10 @@ def top(nelx, nely, volfrac, penal, rmin):
 
 if __name__ == "__main__":
 
-    nelx = 30   
-    nely = 10
-    volfrac = 0.5
-    penal = 3.0
-    rmin = 1.5
-    
-    nelx = 60
+    nelx = 32   
     nely = 20
-    volfrac = 0.3
+    volfrac = 0.4
     penal = 3.0
-    rmin = 2.5
+    rmin = 1.2
     
     top(nelx, nely, volfrac, penal, rmin)

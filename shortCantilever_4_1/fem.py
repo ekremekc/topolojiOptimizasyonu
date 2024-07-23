@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import coo_matrix, coo_array, csr_matrix, csr_array, lil_array, lil_matrix
+from scipy.sparse import lil_array, lil_matrix
 from scipy.sparse.linalg import spsolve
 
 def lk():
@@ -31,11 +31,11 @@ def FE(nelx, nely, x, penal):
             edof = [2*n1, 2*n1+1, 2*n2, 2*n2+1, 2*n2+2, 2*n2+3,2*n1+2, 2*n1+3]
             Kn[np.ix_(edof,edof)] += x[ely,elx]**penal*KE
 
+    # Bu örnek için yalnızca kuvvet vektörünü ve sınır koşullarını değiştireceğiz:
     Fn[2*(nelx+1)*(nely+1)-1] = -1
-    print(Fn)
 
     dofs  = np.arange(ndof)
-    fixed = np.union1d(dofs[0:2*(nely+1):2],np.array([2*(nelx+1)*(nely+1)-1]))
+    fixed = dofs[0:2*(nely+1):1]
     free  = np.setdiff1d(dofs,fixed)
     
     Kn = Kn[free,:][:,free]
@@ -49,8 +49,7 @@ if __name__ == "__main__":
     # Default input parameters
     nelx=32
     nely=20
-    ndof = 2*(nelx+1)*(nelx+1)
-    x = np.full((nelx,nely), 0.4)
+    x = np.full((nely,nelx), 0.4)
     penal = 0.3
     Un = FE(nelx, nely, x, penal)
     print(type(Un))
