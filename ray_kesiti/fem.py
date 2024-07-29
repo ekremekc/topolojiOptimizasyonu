@@ -31,17 +31,21 @@ def FE(nelx, nely, x, penal):
             edof = [2*n1, 2*n1+1, 2*n2, 2*n2+1, 2*n2+2, 2*n2+3,2*n1+2, 2*n1+3]
             Kn[np.ix_(edof,edof)] += x[ely,elx]**penal*KE
 
-    # Fn[1,0] = -1
-
-    # dofs  = np.arange(ndof)
-    # fixed = dofs[2*(nely+1):(2*(nelx+1)*(nely+1)-1):2*(nely+1)]
-    # free  = np.setdiff1d(dofs,fixed)
-    
-    Fn[[2*(nelx+1)*(nely+1)-2],0] = -1
-
     dofs  = np.arange(ndof)
-    fixed = dofs[0:2*(nely+1):2]
+    fixed = dofs[2*(nely+1)-1:2*(nelx+1)*(nely+1):2*(nely+1)]
     free  = np.setdiff1d(dofs,fixed)
+
+    dofs_top = dofs[1:2*(nelx+1)*(nely+1):2*(nely+1)]
+    Fn[dofs_top,0] = -1
+    
+    
+    # works horizantally
+    # dofs  = np.arange(ndof)
+    # fixed = dofs[0:2*(nely+1):2]
+    # free  = np.setdiff1d(dofs,fixed)
+
+    # dofs_right = dofs[2*(nelx+1):2*(nelx+1)*(nely+1)-2:2]
+    # Fn[dofs_right,0] = -1
 
     Kn = Kn[free,:][:,free]
     Un[free]=spsolve(Kn,Fn[free])
@@ -52,8 +56,8 @@ def FE(nelx, nely, x, penal):
 
 if __name__ == "__main__":
     # Default input parameters
-    nelx=10
-    nely=10
+    nelx=20
+    nely=20
     ndof = 2*(nelx+1)*(nelx+1)
     x = np.full((nelx,nely), 0.4)
     penal = 0.3

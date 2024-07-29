@@ -14,7 +14,7 @@ def top(nelx, nely, volfrac, penal, rmin):
 
     # Grafikleri başlatır.
     plt.ion()
-    figure, ax = plt.subplots(figsize=(15, 6))
+    figure, ax = plt.subplots(figsize=(8, 8))
     ax.yaxis.set_inverted(True)
 
     while change >0.01:
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     nelx = 20   
     nely = 20
-    volfrac = 0.5
+    volfrac = 0.4
     penal = 3.0
     rmin = 1.5
     
